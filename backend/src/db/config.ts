@@ -1,21 +1,32 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-export function getDatabaseUrl(): string {
-  if (process.env.MYSQL_URL) {
-    return process.env.MYSQL_URL;
+function cleanEnv(val: string | undefined): string | undefined {
+  if (!val) return undefined;
+  let clean = val.trim();
+  if ((clean.startsWith('"') && clean.endsWith('"')) || (clean.startsWith("'") && clean.endsWith("'"))) {
+    clean = clean.slice(1, -1).trim();
   }
-  if (process.env.DATABASE_URL) {
-    return process.env.DATABASE_URL;
+  return clean.length > 0 ? clean : undefined;
+}
+
+export function getDatabaseUrl(): string {
+  const mysqlUrl = cleanEnv(process.env.MYSQL_URL) 
+    || cleanEnv(process.env.DATABASE_URL) 
+    || cleanEnv(process.env.MYSQL_PRIVATE_URL) 
+    || cleanEnv(process.env.MYSQL_PUBLIC_URL);
+
+  if (mysqlUrl) {
+    return mysqlUrl;
   }
 
   // Handle individual Railway/PaaS variables
-  const host = process.env.MYSQLHOST || process.env.DB_HOST || '127.0.0.1';
-  const port = process.env.MYSQLPORT || process.env.DB_PORT || '3306';
-  const user = process.env.MYSQLUSER || process.env.DB_USER || 'root';
-  const password = process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || '';
-  const database = process.env.MYSQLDATABASE || process.env.DB_NAME || 'bakery_sales';
+  const host = cleanEnv(process.env.MYSQLHOST) || cleanEnv(process.env.DB_HOST) || '127.0.0.1';
+  const port = cleanEnv(process.env.MYSQLPORT) || cleanEnv(process.env.DB_PORT) || '3306';
+  const user = cleanEnv(process.env.MYSQLUSER) || cleanEnv(process.env.DB_USER) || 'root';
+  const password = cleanEnv(process.env.MYSQLPASSWORD) || cleanEnv(process.env.DB_PASSWORD) || '';
+  const database = cleanEnv(process.env.MYSQLDATABASE) || cleanEnv(process.env.DB_NAME) || 'bakery_sales';
 
-  const auth = password ? `${user}:${password}` : user;
+  const auth = password ? `${encodeURIComponent(user)}:${encodeURIComponent(password)}` : encodeURIComponent(user);
   return `mysql://${auth}@${host}:${port}/${database}`;
 }

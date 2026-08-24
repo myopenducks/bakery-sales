@@ -6,9 +6,9 @@ import { eq } from 'drizzle-orm';
 import { getDatabaseUrl } from './config';
 
 async function main() {
-  const connection = await mysql.createConnection({
-    uri: getDatabaseUrl(),
-  });
+  const dbUrl = getDatabaseUrl();
+  console.log('[seed] Connecting to database...');
+  const connection = await mysql.createConnection(dbUrl);
 
   const db = drizzle(connection, { schema, mode: 'default' });
 
