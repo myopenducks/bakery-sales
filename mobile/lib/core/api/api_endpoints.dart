@@ -1,8 +1,17 @@
 import 'package:flutter/foundation.dart';
 
 class ApiEndpoints {
-  // Configurable base url: defaults to 10.0.2.2 for Android emulator, 127.0.0.1 for desktop/web
+  // Support --dart-define=API_BASE_URL=https://...
+  static const String _envBaseUrl = String.fromEnvironment('API_BASE_URL');
+
   static String get baseUrl {
+    if (_envBaseUrl.isNotEmpty) {
+      final base = _envBaseUrl.endsWith('/') 
+          ? _envBaseUrl.substring(0, _envBaseUrl.length - 1) 
+          : _envBaseUrl;
+      return base.endsWith('/api/v1') ? base : '$base/api/v1';
+    }
+
     if (kIsWeb) return 'http://localhost:3000/api/v1';
     if (defaultTargetPlatform == TargetPlatform.android) {
       return 'http://10.0.2.2:3000/api/v1';
