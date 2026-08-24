@@ -7,17 +7,36 @@ function cleanEnv(val: string | undefined): string | undefined {
   if ((clean.startsWith('"') && clean.endsWith('"')) || (clean.startsWith("'") && clean.endsWith("'"))) {
     clean = clean.slice(1, -1).trim();
   }
-  return clean.length > 0 ? clean : undefined;
+  // If it's an unresolved template variable like ${{...}}, ignore it
+  if (clean.startsWith('${{') || clean.length === 0) {
+    return undefined;
+  }
+  return clean;
+}
+
+function isValidMysqlUrl(url: string | undefined): boolean {
+  if (!url) return false;
+  return url.startsWith('mysql://') || url.startsWith('mysql2://');
 }
 
 export function getDatabaseUrl(): string {
-  const mysqlUrl = cleanEnv(process.env.MYSQL_URL) 
-    || cleanEnv(process.env.DATABASE_URL) 
-    || cleanEnv(process.env.MYSQL_PRIVATE_URL) 
-    || cleanEnv(process.env.MYSQL_PUBLIC_URL);
+  const possibleUrls = [
+    cleanEnv(process.env.MYSQL_URL),
+    cleanEnv(process.env.DATABASE_URL),
+    cleanEnv(process.env.MYSQL_PRIVATE_URL),
+    cleanEnv(process.env.MYSQL_PUBLIC_URL),
+  ];
 
-  if (mysqlUrl) {
-    return mysqlUrl;
+  for (const url of possibleUrls) {
+    if (isValidMysqlUrl(url)) {
+      try {
+        const parsed = new URL(url!);
+        console.log(`[db] Using MySQL connection: host=${parsed.hostname}, port=${parsed.port || '3306'}, database=${parsed.pathname.replace('/', '')}`);
+      } catch {
+        console.log('[db] Using MySQL connection URL');
+      }
+      return url!;
+    }
   }
 
   // Handle individual Railway/PaaS variables
@@ -26,6 +45,8 @@ export function getDatabaseUrl(): string {
   const user = cleanEnv(process.env.MYSQLUSER) || cleanEnv(process.env.DB_USER) || 'root';
   const password = cleanEnv(process.env.MYSQLPASSWORD) || cleanEnv(process.env.DB_PASSWORD) || '';
   const database = cleanEnv(process.env.MYSQLDATABASE) || cleanEnv(process.env.DB_NAME) || 'bakery_sales';
+
+  console.log(`[db] Constructed MySQL target: host=${host}, port=${port}, user=${user}, database=${database}`);
 
   const auth = password ? `${encodeURIComponent(user)}:${encodeURIComponent(password)}` : encodeURIComponent(user);
   return `mysql://${auth}@${host}:${port}/${database}`;
