@@ -67,9 +67,18 @@ class AuthNotifier extends StateNotifier<AuthState> {
       state = state.copyWith(status: AuthStatus.authenticated, user: user);
       return true;
     } catch (e) {
+      String msg = 'Invalid username or password';
+      if (e is DioException) {
+        if (e.response?.data is Map && e.response?.data['error'] != null) {
+          msg = e.response!.data['error'].toString();
+        } else if (e.type == DioExceptionType.connectionTimeout || 
+                   e.type == DioExceptionType.connectionError) {
+          msg = 'Cannot connect to server. Check internet connection.';
+        }
+      }
       state = state.copyWith(
         status: AuthStatus.unauthenticated,
-        errorMessage: 'Invalid username or password',
+        errorMessage: msg,
       );
       return false;
     }
