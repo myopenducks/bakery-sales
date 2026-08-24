@@ -30,14 +30,25 @@ async function main() {
 
   const db = drizzle(connection);
 
-  console.log('Running migrations...');
-  await migrate(db, { migrationsFolder: './drizzle' });
+  const path = await import('path');
+  const fs = await import('fs');
+
+  let migrationsFolder = path.resolve(__dirname, '../../drizzle');
+  if (!fs.existsSync(migrationsFolder)) {
+    migrationsFolder = path.resolve(process.cwd(), 'backend/drizzle');
+    if (!fs.existsSync(migrationsFolder)) {
+      migrationsFolder = path.resolve(process.cwd(), 'drizzle');
+    }
+  }
+
+  console.log(`Running migrations from ${migrationsFolder}...`);
+  await migrate(db, { migrationsFolder });
   console.log('Migrations complete.');
 
   await connection.end();
 }
 
 main().catch((err) => {
-  console.error(err);
+  console.error('Migration failed:', err);
   process.exit(1);
 });
