@@ -5,30 +5,32 @@ import { getDatabaseUrl } from './config';
 import path from 'path';
 import fs from 'fs';
 
-async function main() {
+export async function runMigrations() {
   const dbUrl = getDatabaseUrl();
   console.log('[migrate] Connecting to database...');
 
-  // Connect directly with database connection string
-  const connection = await mysql.createConnection(dbUrl);
-  const db = drizzle(connection);
+  try {
+    const connection = await mysql.createConnection(dbUrl);
+    const db = drizzle(connection);
 
-  let migrationsFolder = path.resolve(__dirname, '../../drizzle');
-  if (!fs.existsSync(migrationsFolder)) {
-    migrationsFolder = path.resolve(process.cwd(), 'backend/drizzle');
+    let migrationsFolder = path.resolve(__dirname, '../../drizzle');
     if (!fs.existsSync(migrationsFolder)) {
-      migrationsFolder = path.resolve(process.cwd(), 'drizzle');
+      migrationsFolder = path.resolve(process.cwd(), 'backend/drizzle');
+      if (!fs.existsSync(migrationsFolder)) {
+        migrationsFolder = path.resolve(process.cwd(), 'drizzle');
+      }
     }
+
+    console.log(`[migrate] Running migrations from ${migrationsFolder}...`);
+    await migrate(db, { migrationsFolder });
+    console.log('[migrate] Migrations completed successfully.');
+
+    await connection.end();
+  } catch (err) {
+    console.error('[migrate] Migration warning/error:', err);
   }
-
-  console.log(`[migrate] Running migrations from ${migrationsFolder}...`);
-  await migrate(db, { migrationsFolder });
-  console.log('[migrate] Migrations completed successfully.');
-
-  await connection.end();
 }
 
-main().catch((err) => {
-  console.error('[migrate] Migration error:', err);
-  process.exit(1);
-});
+if (require.main === module) {
+  runMigrations().then(() => process.exit(0)).catch(() => process.exit(1));
+}

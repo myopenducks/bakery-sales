@@ -1,6 +1,12 @@
 import { buildApp } from './app';
+import { runMigrations } from './db/migrate';
+import { runSeed } from './db/seed';
 
 const start = async () => {
+  // Run migrations and admin seed gracefully
+  await runMigrations();
+  await runSeed();
+
   const app = await buildApp();
   const port = parseInt(process.env.PORT || '3000', 10);
   const host = process.env.HOST || '0.0.0.0';
