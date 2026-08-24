@@ -12,11 +12,8 @@ class ApiEndpoints {
       return base.endsWith('/api/v1') ? base : '$base/api/v1';
     }
 
-    if (kIsWeb) return 'http://localhost:3000/api/v1';
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      return 'http://10.0.2.2:3000/api/v1';
-    }
-    return 'http://localhost:3000/api/v1';
+    // Default to live Railway deployment
+    return 'https://bakery-sales-production.up.railway.app/api/v1';
   }
 
   // Auth
