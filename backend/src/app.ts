@@ -48,6 +48,11 @@ export const buildApp = async (): Promise<FastifyInstance> => {
     }
   });
 
+  // Healthcheck for Railway / monitoring
+  app.get('/health', async () => {
+    return { status: 'ok', uptime: process.uptime(), timestamp: new Date().toISOString() };
+  });
+
   // Routes
   await app.register(authRoutes, { prefix: '/api/v1/auth' });
   await app.register(cafesRoutes, { prefix: '/api/v1/cafes' });

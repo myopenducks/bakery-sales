@@ -1,0 +1,13 @@
+{
+  "name": "bakery-sales",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Deploy wrapper — API lives in backend",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "npm ci --prefix backend && npm run build --prefix backend",
+    "start": "npm run start --prefix backend"
+  }
+}

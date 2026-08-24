@@ -1,29 +1,37 @@
 import { drizzle } from 'drizzle-orm/mysql2';
 import mysql from 'mysql2/promise';
-import * as dotenv from 'dotenv';
 import * as schema from './schema';
 import * as argon2 from 'argon2';
-
-dotenv.config();
+import { eq } from 'drizzle-orm';
+import { getDatabaseUrl } from './config';
 
 async function main() {
   const connection = await mysql.createConnection({
-    uri: process.env.DATABASE_URL || 'mysql://root:@localhost:3306/bakery_sales',
+    uri: getDatabaseUrl(),
   });
 
   const db = drizzle(connection, { schema, mode: 'default' });
 
-  console.log('Seeding admin user...');
+  // Check if admin user already exists
+  const existing = await db
+    .select()
+    .from(schema.users)
+    .where(eq(schema.users.username, 'admin'))
+    .limit(1);
 
-  // Create admin user
-  const passwordHash = await argon2.hash('admin123');
+  if (existing.length > 0) {
+    console.log('Admin user already exists. Skipping seed.');
+  } else {
+    console.log('Seeding admin user...');
+    const passwordHash = await argon2.hash('admin123');
 
-  await db.insert(schema.users).values({
-    username: 'admin',
-    passwordHash,
-  });
+    await db.insert(schema.users).values({
+      username: 'admin',
+      passwordHash,
+    });
+    console.log('Admin user created successfully.');
+  }
 
-  console.log('Seeding complete.');
   await connection.end();
 }
 
