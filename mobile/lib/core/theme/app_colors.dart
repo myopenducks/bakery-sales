@@ -1,28 +1,29 @@
 import 'package:flutter/material.dart';
 
-/// Warm Artisanal Bakery Color Palette:
-/// - #CCD5AE (Sage Green)
-/// - #E9EDC9 (Buttercream Matcha)
-/// - #FEFAE0 (Warm Vanilla Cream)
-/// - #FAEDCD (Warm Biscuit)
-/// - #D4A373 (Golden Crust Caramel)
+/// Soft, Friendly Artisanal Bakery Palette:
+/// - #CCD5AE (Soft Sage Green)
+/// - #E9EDC9 (Buttercream)
+/// - #FEFAE0 (Warm Vanilla Cream Background)
+/// - #FAEDCD (Warm Biscuit Crust)
+/// - #D4A373 (Golden Honey / Caramel)
 class AppColors {
-  // Requested Brand Palette
-  static const Color primary = Color(0xFFD4A373); // Golden Caramel Crust / Main Action
-  static const Color primaryDark = Color(0xFF8C5835); // Deep Baked Crust / Headers & Strong Accent
-  static const Color sage = Color(0xFFCCD5AE); // Sage Olive
-  static const Color buttercream = Color(0xFFE9EDC9); // Light Matcha / Soft highlight
-  static const Color biscuit = Color(0xFFFAEDCD); // Warm Biscuit / Card Borders & Chips
-  static const Color background = Color(0xFFFEFAE0); // Warm Vanilla Cream Background
+  // Brand Tones
+  static const Color primary = Color(0xFFD4A373); // Warm Golden Caramel
+  static const Color primaryDark = Color(0xFFB07D4F); // Rich Golden Brown
+  static const Color sage = Color(0xFFCCD5AE); // Soft Sage Green
+  static const Color buttercream = Color(0xFFE9EDC9); // Pale Buttercream
+  static const Color biscuit = Color(0xFFFAEDCD); // Warm Biscuit
+  static const Color background = Color(0xFFFEFAE0); // Soft Vanilla Background
 
-  // Legacy mappings for seamless compatibility
-  static const Color surfaceLight = Color(0xFFFAEDCD); // Warm Biscuit
-  static const Color surfaceSecondary = Color(0xFFCCD5AE); // Sage Green
+  // Surface & Layout
+  static const Color surfaceLight = Color(0xFFFAEDCD);
+  static const Color surfaceSecondary = Color(0xFFE9EDC9);
   static const Color cardBackground = Colors.white;
+  static const Color cardBorder = Color(0xFFEADFC7);
 
   // Typography & Semantics
-  static const Color textDark = Color(0xFF3B281C); // Deep Roasted Coffee Text
-  static const Color textMuted = Color(0xFF7A6B5D); // Warm Cocoa Muted
-  static const Color error = Color(0xFFC1121F); // Crisp Baked Red Error
-  static const Color success = Color(0xFF606C38); // Forest Olive Green Success
+  static const Color textDark = Color(0xFF3D2B1F); // Warm Roasted Espresso
+  static const Color textMuted = Color(0xFF8A7768); // Soft Cocoa Muted
+  static const Color error = Color(0xFFD94848); // Gentle Red
+  static const Color success = Color(0xFF6B8E23); // Olive Success
 }
