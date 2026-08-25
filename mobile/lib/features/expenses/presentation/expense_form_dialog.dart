@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/error_handler.dart';
 import '../data/expenses_repository.dart';
 import '../providers/expenses_provider.dart';
 import '../../dashboard/providers/dashboard_provider.dart';
@@ -77,7 +78,7 @@ class _ExpenseFormDialogState extends ConsumerState<ExpenseFormDialog> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to save expense: $e'), backgroundColor: AppColors.error),
+          SnackBar(content: Text('Failed to save expense: ${friendlyError(e)}'), backgroundColor: AppColors.error),
         );
       }
     } finally {

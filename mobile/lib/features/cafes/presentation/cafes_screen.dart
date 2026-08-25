@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/error_handler.dart';
 import '../providers/cafes_provider.dart';
 import '../data/cafes_repository.dart';
 import 'cafe_form_dialog.dart';
@@ -170,7 +171,7 @@ class _CafesScreenState extends ConsumerState<CafesScreen> {
                 ref.invalidate(cafesListProvider);
               } catch (e) {
                 messenger.showSnackBar(
-                  SnackBar(content: Text('Delete failed: $e'), backgroundColor: AppColors.error),
+                  SnackBar(content: Text('Delete failed: ${friendlyError(e)}'), backgroundColor: AppColors.error),
                 );
               }
             },

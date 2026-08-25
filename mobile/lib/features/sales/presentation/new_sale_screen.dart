@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/error_handler.dart';
 import '../../../core/utils/formatters.dart';
 import '../../cafes/data/cafes_repository.dart';
 import '../../cafes/providers/cafes_provider.dart';
@@ -115,7 +116,7 @@ class _NewSaleScreenState extends ConsumerState<NewSaleScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Sale failed: $e'), backgroundColor: AppColors.error),
+          SnackBar(content: Text('Sale failed: ${friendlyError(e)}'), backgroundColor: AppColors.error),
         );
       }
     } finally {

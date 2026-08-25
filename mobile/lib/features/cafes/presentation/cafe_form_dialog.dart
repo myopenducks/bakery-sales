@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/error_handler.dart';
 import '../data/cafes_repository.dart';
 import '../providers/cafes_provider.dart';
 
@@ -53,7 +54,7 @@ class _CafeFormDialogState extends ConsumerState<CafeFormDialog> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to save café: $e'), backgroundColor: AppColors.error),
+          SnackBar(content: Text('Failed to save café: ${friendlyError(e)}'), backgroundColor: AppColors.error),
         );
       }
     } finally {

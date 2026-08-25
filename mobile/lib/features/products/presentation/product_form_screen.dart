@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/error_handler.dart';
 import '../data/products_repository.dart';
 import '../providers/products_provider.dart';
 
@@ -86,7 +87,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to save product: $e'), backgroundColor: AppColors.error),
+          SnackBar(content: Text('Failed to save product: ${friendlyError(e)}'), backgroundColor: AppColors.error),
         );
       }
     } finally {

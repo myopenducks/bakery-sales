@@ -140,7 +140,7 @@ const salesRoutes: FastifyPluginAsync = async (fastify) => {
         await tx.insert(saleItems).values(itemsToInsert);
       });
 
-      return reply.status(201).send({ success: true });
+      return reply.status(201).send({ success: true, saleId: newSaleId });
     } catch (error: any) {
       return reply.status(400).send({ error: error.message || 'Transaction failed' });
     }

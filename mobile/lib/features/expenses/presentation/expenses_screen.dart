@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/error_handler.dart';
 import '../../../core/utils/formatters.dart';
 import '../providers/expenses_provider.dart';
 import '../data/expenses_repository.dart';
@@ -157,7 +158,7 @@ class ExpensesScreen extends ConsumerWidget {
               } catch (e) {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Delete failed: $e'), backgroundColor: AppColors.error),
+                    SnackBar(content: Text('Delete failed: ${friendlyError(e)}'), backgroundColor: AppColors.error),
                   );
                 }
               }
