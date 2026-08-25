@@ -24,19 +24,19 @@ final dashboardFilterProvider = StateProvider<DashboardFilter>((ref) {
   return DashboardFilter(period: 'today');
 });
 
-final dashboardSummaryProvider = FutureProvider.autoDispose<DashboardSummaryModel>((ref) async {
+final dashboardSummaryProvider = FutureProvider<DashboardSummaryModel>((ref) async {
   final repo = ref.watch(dashboardRepositoryProvider);
   final filter = ref.watch(dashboardFilterProvider);
   return await repo.getSummary(period: filter.period, month: filter.customMonth);
 });
 
-final dashboardCafesProvider = FutureProvider.autoDispose<List<RankedCafeModel>>((ref) async {
+final dashboardCafesProvider = FutureProvider<List<RankedCafeModel>>((ref) async {
   final repo = ref.watch(dashboardRepositoryProvider);
   final filter = ref.watch(dashboardFilterProvider);
   return await repo.getTopCafes(period: filter.period, month: filter.customMonth);
 });
 
-final dashboardProductsProvider = FutureProvider.autoDispose<List<RankedProductModel>>((ref) async {
+final dashboardProductsProvider = FutureProvider<List<RankedProductModel>>((ref) async {
   final repo = ref.watch(dashboardRepositoryProvider);
   final filter = ref.watch(dashboardFilterProvider);
   return await repo.getTopProducts(period: filter.period, month: filter.customMonth);

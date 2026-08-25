@@ -6,7 +6,7 @@ final cafesRepositoryProvider = Provider<CafesRepository>((ref) {
   return CafesRepository(ref.watch(dioProvider));
 });
 
-final cafesListProvider = FutureProvider.autoDispose<List<CafeModel>>((ref) async {
+final cafesListProvider = FutureProvider<List<CafeModel>>((ref) async {
   final repo = ref.watch(cafesRepositoryProvider);
   return await repo.getCafes();
 });

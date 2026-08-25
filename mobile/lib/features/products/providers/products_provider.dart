@@ -6,7 +6,7 @@ final productsRepositoryProvider = Provider<ProductsRepository>((ref) {
   return ProductsRepository(ref.watch(dioProvider));
 });
 
-final productsListProvider = FutureProvider.autoDispose<List<ProductModel>>((ref) async {
+final productsListProvider = FutureProvider<List<ProductModel>>((ref) async {
   final repo = ref.watch(productsRepositoryProvider);
   return await repo.getProducts();
 });
