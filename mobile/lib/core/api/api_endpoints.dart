@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 class ApiEndpoints {
   // Support --dart-define=API_BASE_URL=https://...
   static const String _envBaseUrl = String.fromEnvironment('API_BASE_URL');

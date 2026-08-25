@@ -1,7 +1,7 @@
 import { FastifyPluginAsync } from 'fastify';
 import { db } from '../../db';
-import { cafes } from '../../db/schema';
-import { eq } from 'drizzle-orm';
+import { cafes, sales, saleItems } from '../../db/schema';
+import { eq, inArray } from 'drizzle-orm';
 import { createCafeSchema, updateCafeSchema } from './cafes.schema';
 
 const cafesRoutes: FastifyPluginAsync = async (fastify) => {
@@ -54,10 +54,25 @@ const cafesRoutes: FastifyPluginAsync = async (fastify) => {
     return reply.send({ success: true });
   });
 
-  // DELETE /api/v1/cafes/:id
+  // DELETE /api/v1/cafes/:id — cascade deletes related sales & items
   fastify.delete('/:id', { preValidation: [fastify.authenticate] }, async (request, reply) => {
     const { id } = request.params as { id: string };
-    
+
+    // Find all sales for this café
+    const cafeSales = await db
+      .select({ id: sales.id })
+      .from(sales)
+      .where(eq(sales.cafeId, id));
+
+    if (cafeSales.length > 0) {
+      const saleIds = cafeSales.map((s) => s.id);
+      // Delete sale items first (FK constraint)
+      await db.delete(saleItems).where(inArray(saleItems.saleId, saleIds));
+      // Then delete the sales
+      await db.delete(sales).where(eq(sales.cafeId, id));
+    }
+
+    // Finally delete the café
     await db.delete(cafes).where(eq(cafes.id, id));
     
     return reply.send({ success: true });
