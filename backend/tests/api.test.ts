@@ -291,13 +291,16 @@ describe('Bakery Sales API Integration Tests', () => {
   // ── Critical: Café Delete with Sales (the bug that was in prod) ────────────
 
   describe('Café Delete Cascade (FK safety)', () => {
-    it('DELETE /cafes/:id — should cascade-delete sales and succeed even when café has sales', async () => {
+    it('DELETE /cafes/:id — should cascade-delete sales and succeed even when café has sales and Content-Type is sent', async () => {
       const res = await app.inject({
         method: 'DELETE',
         url: `/api/v1/cafes/${cafeId}`,
-        headers: authHeader(token),
+        headers: {
+          ...authHeader(token),
+          'content-type': 'application/json',
+        },
       });
-      // This test would have FAILED before the cascade fix was applied
+      // This test ensures FST_ERR_CTP_EMPTY_JSON_BODY doesn't occur when clients send Content-Type header on DELETE
       assert.strictEqual(res.statusCode, 200, 'Deleting a café with sales should succeed (cascade delete)');
     });
 

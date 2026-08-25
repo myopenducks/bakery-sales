@@ -35,6 +35,21 @@ export const buildApp = async (): Promise<FastifyInstance> => {
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
+  // Gracefully handle empty JSON body on requests like DELETE/GET where clients send Content-Type header
+  app.addContentTypeParser('application/json', { parseAs: 'string' }, (req, body, done) => {
+    if (!body || (typeof body === 'string' && body.trim().length === 0)) {
+      done(null, undefined);
+      return;
+    }
+    try {
+      const json = JSON.parse(body as string);
+      done(null, json);
+    } catch (err: any) {
+      err.statusCode = 400;
+      done(err, undefined);
+    }
+  });
+
   await app.register(fastifyJwt, {
     secret: process.env.JWT_SECRET || 'super_secret_jwt_key_change_me'
   });
