@@ -69,6 +69,9 @@ const salesRoutes: FastifyPluginAsync = async (fastify) => {
     const { cafeId, items } = parsed.data;
 
     try {
+      const { createId } = await import('@paralleldrive/cuid2');
+      const newSaleId = createId();
+
       await db.transaction(async (tx) => {
         // Validate cafe
         const [cafe] = await tx.select().from(cafes).where(eq(cafes.id, cafeId));
@@ -117,11 +120,6 @@ const salesRoutes: FastifyPluginAsync = async (fastify) => {
             totalAmount: lineTotal,
           });
         }
-
-        // To ensure we have the created sale ID (since MySQL doesn't natively return it cleanly via Drizzle without returning clauses),
-        // we explicitly generate the cuid.
-        const { createId } = await import('@paralleldrive/cuid2');
-        const newSaleId = createId();
 
         // Create Sale
         await tx.insert(sales).values({
