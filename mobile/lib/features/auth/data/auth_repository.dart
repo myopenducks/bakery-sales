@@ -45,6 +45,16 @@ class AuthRepository {
     return null;
   }
 
+  Future<void> changePassword(String oldPassword, String newPassword) async {
+    await _dio.post(
+      ApiEndpoints.changePassword,
+      data: {
+        'oldPassword': oldPassword,
+        'newPassword': newPassword,
+      },
+    );
+  }
+
   Future<void> logout() async {
     await TokenStorage.clearToken();
   }

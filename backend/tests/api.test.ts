@@ -47,13 +47,21 @@ describe('Bakery Sales API Integration Tests', () => {
   });
 
   after(async () => {
-    // Cleanup: delete test data in reverse FK order
-    await db.delete(saleItems);
-    await db.delete(sales);
-    await db.delete(cafes);
-    await db.delete(products);
-    await db.delete(expenses);
-    await db.delete(users).where(eq(users.username, 'test_admin'));
+    // Safe Cleanup: ONLY delete test-created IDs, NEVER wipe whole tables
+    if (saleId) {
+      await db.delete(saleItems).where(eq(saleItems.saleId, saleId)).catch(() => {});
+      await db.delete(sales).where(eq(sales.id, saleId)).catch(() => {});
+    }
+    if (cafeId) {
+      await db.delete(cafes).where(eq(cafes.id, cafeId)).catch(() => {});
+    }
+    if (productId) {
+      await db.delete(products).where(eq(products.id, productId)).catch(() => {});
+    }
+    if (expenseId) {
+      await db.delete(expenses).where(eq(expenses.id, expenseId)).catch(() => {});
+    }
+    await db.delete(users).where(eq(users.username, 'test_admin')).catch(() => {});
     await app.close();
   });
 
@@ -90,6 +98,36 @@ describe('Bakery Sales API Integration Tests', () => {
       assert.strictEqual(res.statusCode, 200);
       const body = JSON.parse(res.body);
       assert.strictEqual(body.user.username, 'test_admin');
+    });
+
+    it('POST /auth/change-password — should reject incorrect old password', async () => {
+      const res = await app.inject({
+        method: 'POST',
+        url: '/api/v1/auth/change-password',
+        headers: authHeader(token),
+        payload: { oldPassword: 'wrongOldPassword', newPassword: 'NewPassword456' },
+      });
+      assert.strictEqual(res.statusCode, 400);
+    });
+
+    it('POST /auth/change-password — should succeed with correct old password', async () => {
+      const res = await app.inject({
+        method: 'POST',
+        url: '/api/v1/auth/change-password',
+        headers: authHeader(token),
+        payload: { oldPassword: 'TestPass123', newPassword: 'NewPassword456' },
+      });
+      assert.strictEqual(res.statusCode, 200);
+
+      // Verify login with new password
+      const loginRes = await app.inject({
+        method: 'POST',
+        url: '/api/v1/auth/login',
+        payload: { username: 'test_admin', password: 'NewPassword456' },
+      });
+      assert.strictEqual(loginRes.statusCode, 200);
+      const body = JSON.parse(loginRes.body);
+      token = body.token;
     });
 
     it('GET /auth/me — should reject unauthenticated', async () => {

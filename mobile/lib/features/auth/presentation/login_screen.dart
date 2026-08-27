@@ -189,14 +189,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           // Username
                           TextFormField(
                             controller: _usernameController,
+                            textInputAction: TextInputAction.next,
                             style: GoogleFonts.outfit(
                               fontWeight: FontWeight.w600,
                               color: AppColors.textDark,
                             ),
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               labelText: 'Username',
                               hintText: 'e.g. admin',
-                              prefixIcon: const Icon(Icons.person_outline_rounded, color: AppColors.primaryDark),
+                              prefixIcon: Icon(Icons.person_outline_rounded, color: AppColors.primaryDark),
                             ),
                             validator: (v) => (v == null || v.trim().isEmpty) ? 'Enter username' : null,
                           ),
@@ -206,6 +207,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           TextFormField(
                             controller: _passwordController,
                             obscureText: _obscurePassword,
+                            textInputAction: TextInputAction.done,
+                            onFieldSubmitted: (_) => _handleLogin(),
                             style: GoogleFonts.outfit(
                               fontWeight: FontWeight.w600,
                               color: AppColors.textDark,

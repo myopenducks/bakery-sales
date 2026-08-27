@@ -8,6 +8,8 @@ import '../data/dashboard_repository.dart';
 import '../providers/dashboard_provider.dart';
 import '../../sales/data/sales_repository.dart';
 import '../../sales/presentation/sale_detail_screen.dart';
+import '../../auth/presentation/change_password_dialog.dart';
+import '../../auth/providers/auth_provider.dart';
 
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
@@ -25,11 +27,49 @@ class DashboardScreen extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
+            tooltip: 'Refresh',
             onPressed: () {
               ref.invalidate(dashboardSummaryProvider);
               ref.invalidate(dashboardCafesProvider);
               ref.invalidate(dashboardProductsProvider);
             },
+          ),
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert_rounded),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            onSelected: (value) {
+              if (value == 'change_password') {
+                showDialog(
+                  context: context,
+                  builder: (_) => const ChangePasswordDialog(),
+                );
+              } else if (value == 'logout') {
+                ref.read(authProvider.notifier).logout();
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'change_password',
+                child: Row(
+                  children: [
+                    Icon(Icons.lock_reset_rounded, size: 20, color: AppColors.primaryDark),
+                    SizedBox(width: 10),
+                    Text('Change Password'),
+                  ],
+                ),
+              ),
+              const PopupMenuDivider(),
+              const PopupMenuItem(
+                value: 'logout',
+                child: Row(
+                  children: [
+                    Icon(Icons.logout_rounded, size: 20, color: AppColors.error),
+                    SizedBox(width: 10),
+                    Text('Log Out', style: TextStyle(color: AppColors.error)),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
