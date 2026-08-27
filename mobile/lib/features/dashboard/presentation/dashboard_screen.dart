@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/utils/error_handler.dart';
 import '../../../core/utils/formatters.dart';
 import '../data/dashboard_repository.dart';
 import '../providers/dashboard_provider.dart';
@@ -55,7 +56,7 @@ class DashboardScreen extends ConsumerWidget {
                   color: AppColors.error.withValues(alpha: 0.1),
                   child: Padding(
                     padding: const EdgeInsets.all(16),
-                    child: Text('Failed to load summary: $err', style: const TextStyle(color: AppColors.error)),
+                    child: Text(friendlyError(err), style: const TextStyle(color: AppColors.error, fontWeight: FontWeight.w500)),
                   ),
                 ),
                 data: (summary) => _buildSummaryCards(summary),
@@ -67,7 +68,7 @@ class DashboardScreen extends ConsumerWidget {
               const SizedBox(height: 8),
               cafesAsync.when(
                 loading: () => const Center(child: Padding(padding: EdgeInsets.all(16), child: CircularProgressIndicator(color: AppColors.primary))),
-                error: (err, _) => Text('Error: $err'),
+                error: (err, _) => Text(friendlyError(err), style: const TextStyle(color: AppColors.error)),
                 data: (cafes) => _buildTopCafesCard(cafes),
               ),
               const SizedBox(height: 24),
@@ -77,7 +78,7 @@ class DashboardScreen extends ConsumerWidget {
               const SizedBox(height: 8),
               productsAsync.when(
                 loading: () => const Center(child: Padding(padding: EdgeInsets.all(16), child: CircularProgressIndicator(color: AppColors.primary))),
-                error: (err, _) => Text('Error: $err'),
+                error: (err, _) => Text(friendlyError(err), style: const TextStyle(color: AppColors.error)),
                 data: (products) => _buildTopProductsCard(products),
               ),
               const SizedBox(height: 24),

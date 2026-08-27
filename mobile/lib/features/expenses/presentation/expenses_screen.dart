@@ -34,7 +34,7 @@ class ExpensesScreen extends ConsumerWidget {
             children: [
               const Icon(Icons.error_outline, color: AppColors.error, size: 40),
               const SizedBox(height: 10),
-              Text('Failed to load expenses: $err'),
+              Text(friendlyError(err), textAlign: TextAlign.center, style: const TextStyle(color: AppColors.textDark, fontWeight: FontWeight.w500)),
               const SizedBox(height: 12),
               ElevatedButton(
                 onPressed: () => ref.invalidate(expensesListProvider),
